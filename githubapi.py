@@ -27,8 +27,6 @@ def get_commits(githubID, repo_name):
     commits = requests.get("https://api.github.com/repos/" +githubID+ "/" +repo_name+ "/commits")
     retrieved = json.loads(commits.text)
 
-    #print(retrieved)
-
     return len(retrieved)
 
 def main():
@@ -38,8 +36,6 @@ def main():
 
     for repo in repositories:
         print("Repo: " +repo+ " Number of commits: " +str(get_commits(githubID, repo)))
-
-    #print(get_commits("nhilden1114", "667565ffghf"))
 
 
 if __name__ == "__main__":
