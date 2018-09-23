@@ -1,3 +1,9 @@
+'''
+@author Nicole Hilden
+September 22 2018
+
+'''
+
 import requests
 import json
 
@@ -11,7 +17,7 @@ def get_repos(githubID):
     for i in retrieved:
         try: repo_list += [i.get('name')]
         except:
-            print("Cannot get repositories for "+githubID)
+            print ("Cannot get repositories for "+githubID)
             return []
 
     return repo_list
@@ -20,6 +26,8 @@ def get_commits(githubID, repo_name):
 
     commits = requests.get("https://api.github.com/repos/" +githubID+ "/" +repo_name+ "/commits")
     retrieved = json.loads(commits.text)
+
+    #print(retrieved)
 
     return len(retrieved)
 
@@ -30,7 +38,8 @@ def main():
 
     for repo in repositories:
         print("Repo: " +repo+ " Number of commits: " +str(get_commits(githubID, repo)))
-    
+
+    #print(get_commits("nhilden1114", "667565ffghf"))
 
 
 if __name__ == "__main__":
