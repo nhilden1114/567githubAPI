@@ -5,10 +5,12 @@ September 22 2018
 '''
 
 import unittest
+from unittest import mock
 from githubapi import get_repos, get_commits
 
 class Test(unittest.TestCase):
 
+    @mock.patch('get_repos')
     def test1_repos(self): 
         repos = get_repos("nhilden1114")
         self.assertEqual(len(repos), 5, "nhilden1114 currently has 5 repos")
