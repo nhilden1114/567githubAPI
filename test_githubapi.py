@@ -1,49 +1,44 @@
 '''
 @author Nicole Hilden
-September 22 2018
+September 30 2018
 
 '''
 
 import unittest
 from unittest import mock
-from githubapi import get_repos, get_commits
+from mock import mock, Mock
+from githubapi import get_repos
 
 class Test(unittest.TestCase):
 
-    @mock.patch('get_repos')
-    def test1_repos(self): 
-        repos = get_repos("nhilden1114")
-        self.assertEqual(len(repos), 5, "nhilden1114 currently has 5 repos")
-        self.assertIn("SSW567", repos)
-        self.assertIn("567-hw1", repos)
-        self.assertIn("567-hw2a", repos)
-        self.assertIn("GEDCOMProject", repos)
-        self.assertIn("567githubAPI", repos)
+    @mock.patch('requests.get')
+    def test1_mock_repos(self, mockedReq):
+        mock_response = [Mock(), Mock(), Mock(), Mock(), Mock(), Mock()]
+        mock_response[0].json.return_value = [{"name": '567-hw1'}, {"name": '567-hw2a'},\
+            {"name": '567githubAPI'}, {"name": 'GEDCOMProject'}, {"name": 'SSW567'}]
+        mock_response[1].json.return_value = [{'sha': 1}, {'sha': 2}, {'sha': 3}]
+        mock_response[2].json.return_value = [{'sha': 1}, {'sha': 2}]
+        mock_response[3].json.return_value = [{'sha': 1}, {'sha': 2}, {'sha': 3}, {'sha': 4}]
+        mock_response[4].json.return_value = [{'sha': 1}, {'sha': 2}, {'sha': 3}]
+        mock_response[5].json.return_value = [{'sha': 1}, {'sha': 2}, {'sha': 3}, {'sha': 4}, {'sha': 5}]
 
-    def test2_repos(self):
-        repos = get_repos("richkempinski")
-        self.assertEqual(len(repos), 4, "richkempinski currently has 4 repos")
-        self.assertIn("hellogitworld", repos)
-        self.assertIn("helloworld", repos)
-        self.assertIn("Project1", repos)
-        self.assertIn("threads-of-life", repos)
+        mockedReq.side_effect = mock_response
+        self.assertEqual(get_repos("nhilden1114"), [('567-hw1', 3), ('567-hw2a', 2), ('567githubAPI', 4),\
+                                                    ('GEDCOMProject', 3), ('SSW567', 5), ])
 
-    def test3_commits(self):
-        self.assertEqual(get_commits("nhilden1114", "SSW567"),1)
-        self.assertEqual(get_commits("nhilden1114", "567-hw1"),4)
-        self.assertEqual(get_commits("nhilden1114", "567-hw2a"),12)
-        self.assertEqual(get_commits("nhilden1114", "SSW567"),1)
+    @mock.patch('requests.get')
+    def test2_mock_repos(self, mockedReq):
+        mock_response = [Mock(), Mock(), Mock(), Mock(), Mock()]
+        mock_response[0].json.return_value = [{'name': 'hellogitworld'}, {'name': 'helloworld'},\
+                                              {'name': 'Project1'}, {'name': 'threads-of-life'}]
+        mock_response[1].json.return_value = [{'sha': 1}, {'sha': 2}, {'sha': 3}]
+        mock_response[2].json.return_value = [{'sha': 1}, {'sha': 2}]
+        mock_response[3].json.return_value = [{'sha': 1}, {'sha': 2}, {'sha': 3}, {'sha': 4}]
+        mock_response[4].json.return_value = [{'sha': 1}, {'sha': 2}, {'sha': 3}]
 
-    def test4_commits(self):
-        self.assertEqual(get_commits("richkempinski", "hellogitworld"),30)
-        self.assertEqual(get_commits("richkempinski", "helloworld"),2)
-        self.assertEqual(get_commits("richkempinski", "Project1"),2)
-        self.assertEqual(get_commits("richkempinski", "threads-of-life"),1)
-
-    def test5_invalid(self):
-        self.assertEqual(get_repos("skjfasdjfu"),[])
-        self.assertEqual(get_repos("eudjcvkjhd"),[])
-        self.assertEqual(get_repos("lkeiuvhasq"),[])
+        mockedReq.side_effect = mock_response
+        self.assertEqual(get_repos("richkempinski"),[('hellogitworld', 3), ('helloworld', 2), ('Project1', 4),\
+                                                   ('threads-of-life', 3)])
 
 
 if __name__ == '__main__':
